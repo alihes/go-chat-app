@@ -25,6 +25,23 @@ func HandleConnections(w http.ResponseWriter, r *http.Request){
 	}
 	defer ws.Close()
 
+	code := r.URL.Query().Get("code")
+	if code == "" {
+		http.Error(w, "missing user code", http.StatusUnauthorized)
+		return
+	}
+
+	var user db.User
+	err = db.Pool.QueryRow(context.Background(),
+		`SELECT ID, username FROM users WHERE code = $1`,
+		code).Scan(&user.ID, &user.Username)
+
+	if err != nil {
+		http.Error(w, "invalid user code", http.StatusUnauthorized)
+		return
+	}
+
+
 	clients[ws] = true
 
 	for {
@@ -35,8 +52,9 @@ func HandleConnections(w http.ResponseWriter, r *http.Request){
 			delete(clients, ws)
 			break
 		}
-		broadcast <- msg
-		senderID, receiverID := 1,2
+		broadcast <- fmt.Sprintf("%s: %s", user.Username, msg)
+		senderID, receiverID := user.ID,0
+
 		go db.InsertMessage(context.Background(), senderID, receiverID, msg)
 
 	}

@@ -2,8 +2,8 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"time"
-
 )
 
 type User struct {
@@ -26,5 +26,6 @@ func InsertMessage(ctx context.Context, senderID, receiverID int, content string
 		INSERT INTO messages (sender_id, receiver_id, content)
 		VALUES ($1, $2, $3)
 		`, senderID, receiverID, content)
+		fmt.Println(err)
 		return err
 }

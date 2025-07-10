@@ -13,7 +13,7 @@ var Pool *pgxpool.Pool
 func Connect() error{
 	dsn := os.Getenv("DATABASE_URL")
 	if dsn == "" {
-		dsn = "postgres://chatuser:1234@127.0.0.1:5432/chatapp?sslmodel=disable"
+		dsn = "postgres://chatuser:1234@127.0.0.1:5432/chatapp"
 	}
 
 	var err error

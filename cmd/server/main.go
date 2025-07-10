@@ -7,7 +7,9 @@ import (
 	"github.com/alihes/go-chat-app/config"
 	"github.com/alihes/go-chat-app/internal/chat"
 	"github.com/alihes/go-chat-app/db"
+	
 )
+import httpapi "github.com/alihes/go-chat-app/api/http"
 
 func main() {
 	cfg := config.Load()
@@ -27,7 +29,10 @@ func main() {
 
 	http.HandleFunc("/ws", chat.HandleConnections)
 
-	fmt.Println("Server listening on https://127.0.0.1:8080")
+	http.HandleFunc("/signup", httpapi.SignupHandler)
+	http.HandleFunc("/login", httpapi.LoginHandler)
+
+	fmt.Println("Server listening on https://127.0.0.1:433")
 	//err := http.ListenAndServe(":8080", nil)
 	err = http.ListenAndServeTLS(cfg.Port, cfg.CertFile, cfg.KeyFile, nil)
 	if err != nil {
