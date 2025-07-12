@@ -20,6 +20,7 @@ func main() {
 	}
 
 	go chat.HandleMessages()
+	go chat.BroadcastOnlineUsers()
 
 	fs := http.FileServer(http.Dir("web/static/"))
 	http.Handle("/static/", http.StripPrefix("/static/",fs))
@@ -28,6 +29,8 @@ func main() {
 	http.HandleFunc("/", index)
 
 	http.HandleFunc("/ws", chat.HandleConnections)
+
+	http.HandleFunc("/api/messages", httpapi.GetMessagesHandler)
 
 	http.HandleFunc("/signup", httpapi.SignupHandler)
 	http.HandleFunc("/login", httpapi.LoginHandler)
